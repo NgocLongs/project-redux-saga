@@ -1,6 +1,4 @@
-export const READY = 'READY';
-export const IN_PROGRESS = 'IN PROGRESS';
-export const COMPLETED = 'COMPLETED';
+export const API_URL = 'https://5f256c4ac85de200162930aa.mockapi.io/api';
 export const STATUS = [
     {
         value : 0,
@@ -14,4 +12,10 @@ export const STATUS = [
         value : 2,
         label : 'COMPLETED'
     }
-]
+];
+
+export const STATUS_CODE = {
+    SUCCESS : 200,
+    CREATED : 201,
+    UPDATED : 202
+};
