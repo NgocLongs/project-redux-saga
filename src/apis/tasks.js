@@ -6,3 +6,7 @@ const url = 'tasks';
 export const  getTasksList = () => {
     return axiosService.get(`${API_URL}/${url}`);
 };
+
+export const addTask = (data) => {
+    return axiosService.post(`${API_URL}/${url}`, data);
+}

@@ -8,11 +8,15 @@ import * as modalActions from './../../actions/modal';
 import { reduxForm, Field } from 'redux-form';
 import renderTextField from './../../components/FormHelper/TextField/index';
 import validate from './validate';
+import * as taskActions from './../../actions/tasks';
 
 class TaskForm extends Component {
 
     handleSubmitForm = (data) => {
-        console.log(data);
+        const { taskActionCreators } = this.props;
+        const { addTask } = taskActionCreators;
+        const { title, description } = data;
+        addTask(title, description);
     }
 
     required = (value) => {
@@ -92,6 +96,9 @@ TaskForm.propTypes = {
     modalActionCreators : PropTypes.shape({
         hideModal : PropTypes.func,
     }),
+    taskActionCreators : PropTypes.shape({
+        addTask : PropTypes.func,
+    }),
     handleSubmit : PropTypes.func,
     invalid : PropTypes.bool,
     submitting : PropTypes.bool,
@@ -101,7 +108,8 @@ const mapStateToProps = null;
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        modalActionCreators : bindActionCreators(modalActions, dispatch)
+        modalActionCreators : bindActionCreators(modalActions, dispatch),
+        taskActionCreators : bindActionCreators(taskActions, dispatch)
     }
 }
 

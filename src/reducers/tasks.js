@@ -31,6 +31,22 @@ const tasks = (state = initialState, action) => {
                 ...state,
                 listTask: datas
             }
+        case TaskActions.ADD_TASK : 
+            return {
+                ...state
+            }
+        case TaskActions.ADD_TASK_SUCCESS :
+            const { task } = action.payload;
+            return {
+                ...state,
+                listTask : [task].concat(state.listTask),
+            }
+        case TaskActions.ADD_TASK_FAILED :
+            const errors = action.payload.error;
+            ToasError(errors);
+            return {
+                ...state,
+            }
         default:
             return state;
     }

@@ -54,3 +54,31 @@ export const searchTaskSuccess = (datas) => {
         }
     }
 }
+
+export const addTask = (title, description) => {
+    return {
+        type : TaskConstants.ADD_TASK,
+        payload : {
+            title,
+            description
+        }
+    }
+}
+
+export const addTaskSuccess = (task) => {
+    return {
+        type : TaskConstants.ADD_TASK_SUCCESS,
+        payload : {
+            task
+        }
+    }
+}
+
+export const addTaskFailed = (error) => {
+    return {
+        type : TaskConstants.ADD_TASK_FAILED,
+        payload : {
+            error
+        }
+    }
+}
