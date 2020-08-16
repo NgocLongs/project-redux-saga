@@ -6,10 +6,11 @@ import AddIcon from '@material-ui/icons/Add';
 import Grid from '@material-ui/core/Grid';
 import { STATUS } from './../../constants/index';
 import TaskList from '../../components/TaskList';
-import TaskForm from './../../components/TaskForm/index';
+import TaskForm from '../TaskForm/index';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as taskActions from './../../actions/tasks';
+import * as modalActions from './../../actions/modal';
 import PropTypes from 'prop-types';
 import SearchBox from '../../components/SearchBox';
 
@@ -50,19 +51,21 @@ class DashBoard extends Component {
     }
 
     openForm = () => {
-        this.setState({
-            open : true
-        });
+        const { modalActionCreator } = this.props;
+        const { showModal, changeModalTitle, changeModalContent } = modalActionCreator;
+        showModal();
+        changeModalTitle('Thêm mới công việc');
+        changeModalContent(<TaskForm />)
     }
 
-    renderForm() {
-        let xhtml = null;
-        const { open } = this.state;
-        xhtml = (
-            <TaskForm open={ open } onCloseForm={ this.handleClose } />
-        );
-        return xhtml;
-    }
+    // renderForm() {
+    //     let xhtml = null;
+    //     const { open } = this.state;
+    //     xhtml = (
+    //         <TaskForm open={ open } onCloseForm={ this.handleClose } />
+    //     );
+    //     return xhtml;
+    // }
 
     handleSearch = (event) => {
         const { value } = event.target;
@@ -91,7 +94,7 @@ class DashBoard extends Component {
 
                 {this.renderDashBoard()}
 
-                {this.renderForm()}
+                {/* {this.renderForm()} */}
 
             </div>
         );
@@ -104,6 +107,12 @@ DashBoard.propTypes = {
         fetchListTasks : PropTypes.func,
         searchTask : PropTypes.func
     }),
+    modalActionCreator : PropTypes.shape({
+        showModal : PropTypes.func,
+        hideModal : PropTypes.func,
+        changeModalTitle : PropTypes.func,
+        changeModalContent : PropTypes.func
+    }),
     listTask : PropTypes.array,
 }
 
@@ -115,7 +124,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        taskActionsCreator : bindActionCreators(taskActions, dispatch)
+        taskActionsCreator : bindActionCreators(taskActions, dispatch),
+        modalActionCreator : bindActionCreators(modalActions, dispatch)
     }
 }
 
