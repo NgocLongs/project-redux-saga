@@ -1,23 +1,26 @@
-import { fork, take, call, put, delay, takeLatest, select, takeEvery } from 'redux-saga/effects';
+import { fork, take, call, put, delay, takeLatest, takeEvery } from 'redux-saga/effects';
 import * as taskTypes from './../constants/tasks';
 import { getTasksList, addTask } from './../apis/tasks';
 import { STATUS_CODE, STATUS } from './../constants/index';
-import { fetchListTasksFailed, fetListTasksSuccess, searchTaskSuccess, addTaskSuccess, addTaskFailed } from './../actions/tasks';
+import { fetchListTasks, fetchListTasksFailed, fetListTasksSuccess, addTaskSuccess, addTaskFailed } from './../actions/tasks';
 import { showLoading, hideLoading } from './../actions/ui';
 import { hideModal } from '../actions/modal';
 
 function* watchFetchListTasksAction() {
-    yield take(taskTypes.FETCH_TASK);
-    yield put(showLoading());
-    const res = yield call(getTasksList)
-    const { status, data } = res;
-    if(status === STATUS_CODE.SUCCESS) {
-        yield put(fetListTasksSuccess(data));
-    } else {
-        yield put(fetchListTasksFailed(data))
+    while (true) {
+        const action = yield take(taskTypes.FETCH_TASK);
+        yield put(showLoading());
+        const { params } = action.payload;
+        const res = yield call(getTasksList, params);
+        const { status, data } = res;
+        if (status === STATUS_CODE.SUCCESS) {
+            yield put(fetListTasksSuccess(data));
+        } else {
+            yield put(fetchListTasksFailed(data))
+        }
+        yield delay(1000);
+        yield put(hideLoading());
     }
-    yield delay(1000);
-    yield put(hideLoading());
 }
 
 function* watchCreateTaskAction() {
@@ -27,13 +30,19 @@ function* watchCreateTaskAction() {
 function* searchTaskSaga({ payload }) {
     yield delay(1000);
     const { keyword } = payload;
-    const list = yield select(state => state.tasks.listTask);
-    const result = list.filter(task => 
-        task.title.trim().toLowerCase().includes(
-            keyword.trim().toLowerCase()
-        )
+    yield put(
+        fetchListTasks({
+            search : keyword
+        })
     );
-    yield put(searchTaskSuccess(result));
+    // const { keyword } = payload;
+    // const list = yield select(state => state.tasks.listTask);
+    // const result = list.filter(task => 
+    //     task.title.trim().toLowerCase().includes(
+    //         keyword.trim().toLowerCase()
+    //     )
+    // );
+    // yield put(searchTaskSuccess(result));
 }
 
 function* addTaskSaga({ payload }) {
@@ -42,10 +51,10 @@ function* addTaskSaga({ payload }) {
     const res = yield call(addTask, {
         title,
         description,
-        status : STATUS[0].value
+        status: STATUS[0].value
     });
-    const {data, status } = res;
-    if(status === STATUS_CODE.CREATED) {
+    const { data, status } = res;
+    if (status === STATUS_CODE.CREATED) {
         yield put(addTaskSuccess(data));
         yield put(hideModal());
     } else {
